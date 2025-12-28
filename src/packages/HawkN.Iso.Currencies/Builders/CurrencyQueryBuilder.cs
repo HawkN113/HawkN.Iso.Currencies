@@ -10,7 +10,7 @@ internal sealed class CurrencyQueryBuilder :
     IIncludeFilterBuilder,
     IExcludeFilterBuilder
 {
-    private readonly IReadOnlyList<Models.Currency> _actualCurrencies;
+    private readonly IReadOnlyList<Currency> _actualCurrencies;
     private readonly HashSet<CurrencyType> _includedTypes = [];
     private readonly HashSet<string> _withCodes = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _withoutCodes = new(StringComparer.OrdinalIgnoreCase);
@@ -18,9 +18,9 @@ internal sealed class CurrencyQueryBuilder :
     private readonly HashSet<string> _withoutNames = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _withNumericCodes = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _withoutNumericCodes = new(StringComparer.OrdinalIgnoreCase);
-    private readonly List<Func<Models.Currency, bool>> _customPredicates = [];
+    private readonly List<Func<Currency, bool>> _customPredicates = [];
 
-    public CurrencyQueryBuilder(IReadOnlyList<Models.Currency> currencies)
+    public CurrencyQueryBuilder(IReadOnlyList<Currency> currencies)
     {
         _actualCurrencies = currencies;
         Includes = this;
@@ -47,15 +47,15 @@ internal sealed class CurrencyQueryBuilder :
         return this;
     }
 
-    public ICurrencyQueryFinal Where(Func<Models.Currency, bool> predicate)
+    public ICurrencyQueryFinal Where(Func<Currency, bool> predicate)
     {
         _customPredicates.Add(predicate);
         return this;
     }
 
-    public IReadOnlyList<Models.Currency> Build()
+    public IReadOnlyList<Currency> Build()
     {
-        Func<Models.Currency, bool> baseFilter = c =>
+        Func<Currency, bool> baseFilter = c =>
             _includedTypes.Contains(c.CurrencyType!.Value) &&
             (_withCodes.Count == 0 || _withCodes.Contains(c.Code)) &&
             (_withoutCodes.Count == 0 || !_withoutCodes.Contains(c.Code)) &&

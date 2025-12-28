@@ -31,5 +31,5 @@ public interface ICurrencyQueryFilter : ICurrencyQueryFinal
     /// <summary>
     /// Adds a custom predicate filter to the query (after Type).
     /// </summary>
-    ICurrencyQueryFinal Where(Func<Models.Currency, bool> predicate);
+    ICurrencyQueryFinal Where(Func<Currency, bool> predicate);
 }

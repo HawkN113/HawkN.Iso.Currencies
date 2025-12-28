@@ -6,10 +6,10 @@ namespace HawkN.Iso.Currencies.Services;
 
 internal sealed class CurrencyService : ICurrencyService
 {
-    private readonly IReadOnlyDictionary<string, Models.Currency> _actualCurrencies =
+    private readonly IReadOnlyDictionary<string, Currency> _actualCurrencies =
         LocalCurrencyDatabase.ActualCurrencies.ToDictionary(c => c.Code, StringComparer.OrdinalIgnoreCase);
 
-    private readonly IReadOnlyDictionary<string, Models.Currency> _historicalCurrencies =
+    private readonly IReadOnlyDictionary<string, Currency> _historicalCurrencies =
         LocalCurrencyDatabase.HistoricalCurrencies.ToDictionary(c => c.Code, StringComparer.OrdinalIgnoreCase);
 
     public bool TryValidate(string value, out ValidationResult result)
@@ -48,21 +48,21 @@ internal sealed class CurrencyService : ICurrencyService
     public bool Exists(CurrencyCode code) =>
         code != CurrencyCode.None && _actualCurrencies.ContainsKey(code.ToString());
 
-    public Models.Currency? Get(string value)
+    public Currency? Get(string value)
     {
         if (!Exists(value)) return null;
         _actualCurrencies.TryGetValue(value, out var currency);
         return currency;
     }
 
-    public Models.Currency? Get(CurrencyCode code)
+    public Currency? Get(CurrencyCode code)
     {
         if (!Exists(code)) return null;
         _actualCurrencies.TryGetValue(code.ToString(), out var currency);
         return currency;
     }
 
-    public Models.Currency? GetHistorical(string value)
+    public Currency? GetHistorical(string value)
     {
         var isExist = !string.IsNullOrWhiteSpace(value) && _historicalCurrencies.ContainsKey(value.Trim());
         if (!isExist) return null;
@@ -70,7 +70,7 @@ internal sealed class CurrencyService : ICurrencyService
         return currency;
     }
 
-    public Models.Currency[] GetAllHistorical()
+    public Currency[] GetAllHistorical()
     {
         return _historicalCurrencies.Values.ToArray();
     }

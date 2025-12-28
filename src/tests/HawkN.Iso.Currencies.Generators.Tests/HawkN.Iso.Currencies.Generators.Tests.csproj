@@ -39,8 +39,4 @@
       <None Remove="Content\**" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Mocks\" />
-    </ItemGroup>
-
 </Project>

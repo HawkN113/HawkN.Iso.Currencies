@@ -34,11 +34,11 @@ internal sealed class CurrencyLoader
         _historicalCurrencyData.Currencies = ProcessCurrencies(historical.Currencies, replacements);
     }
 
-    private static List<Models.Currency> ProcessCurrencies(IEnumerable<CurrencyRaw> currencies,
+    private static List<CurrencyRow> ProcessCurrencies(IEnumerable<CurrencyRaw> currencies,
         IReadOnlyDictionary<string, string> replacements)
         => currencies
             .Where(c => !ExcludedCodes.Contains(c.Code))
-            .Select(c => new Models.Currency
+            .Select(c => new CurrencyRow
             {
                 Code = c.Code,
                 Name = replacements.TryGetValue(c.Code, out var newName) ? newName : c.Name,

@@ -11,5 +11,5 @@ public interface ICurrencyQueryFinal
     /// Builds and returns a collection of currencies matching the configured filters.
     /// </summary>
     /// <returns>A read-only collection of <see cref="Currency"/> objects.</returns>
-    IReadOnlyList<Models.Currency> Build();
+    IReadOnlyList<Currency> Build();
 }

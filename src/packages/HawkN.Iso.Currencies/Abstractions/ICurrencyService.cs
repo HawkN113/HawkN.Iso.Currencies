@@ -31,25 +31,25 @@ public interface ICurrencyService
     /// <summary>
     /// Gets current (active) currency information by code or name.
     /// </summary>
-    Models.Currency? Get(string value);
+    Currency? Get(string value);
 
     /// <summary>
     /// Gets current (active) currency information by enum code.
     /// </summary>
-    Models.Currency? Get(CurrencyCode code);
+    Currency? Get(CurrencyCode code);
 
     /// <summary>
     /// Gets historical (withdrawn) currency information by string value.
     /// </summary>
     /// <param name="value">Currency code or name.</param>
     /// <returns>Currency object or null if not found.</returns>
-    Models.Currency? GetHistorical(string value);
+    Currency? GetHistorical(string value);
 
     /// <summary>
     /// Retrieves all historical (withdrawn) currencies defined by ISO 4217.
     /// </summary>
     /// <returns>An array of <see cref="Currency"/> objects representing withdrawn currencies.</returns>
-    Models.Currency[] GetAllHistorical();
+    Currency[] GetAllHistorical();
 
     /// <summary>
     /// Starts building a query for actual currencies with fluent filtering and sorting.

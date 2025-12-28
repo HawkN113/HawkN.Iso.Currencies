@@ -3,5 +3,5 @@
 internal sealed class CurrencyData
 {
     public string PublishedDate { get; set; } = string.Empty;
-    public List<Currency> Currencies { get; set; } = [];
+    public List<CurrencyRow> Currencies { get; set; } = [];
 }
