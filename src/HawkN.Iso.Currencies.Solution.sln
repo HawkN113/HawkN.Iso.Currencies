@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{95D62D95-7877-468A-A4B6-990F8CCAE311}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FBD7AC81-1E33-47DE-8C01-14A01DAE782E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packages", "packages", "{B6BF62BA-6B50-4FD9-9CC2-7F0EC923E02F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HawkN.Iso.Currencies", "packages\HawkN.Iso.Currencies\HawkN.Iso.Currencies.csproj", "{EC5B72D5-E6FE-426A-99D6-743D1FB30A62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HawkN.Iso.Currencies.Sample.Console", "samples\HawkN.Iso.Currencies.Sample.Console\HawkN.Iso.Currencies.Sample.Console.csproj", "{31A41FAA-909E-42C8-A3FF-F7263E7A81C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HawkN.Iso.Currencies.Sample.WebApi", "samples\HawkN.Iso.Currencies.Sample.WebApi\HawkN.Iso.Currencies.Sample.WebApi.csproj", "{FFC52690-1D39-4943-B1BB-99285F27DD76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HawkN.Iso.Currencies.Tests", "tests\HawkN.Iso.Currencies.Tests\HawkN.Iso.Currencies.Tests.csproj", "{3F7B4653-75E7-4A12-B4BF-2C35F2A6C807}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HawkN.Iso.Currencies.Generators", "packages\HawkN.Iso.Currencies.Generators\HawkN.Iso.Currencies.Generators.csproj", "{D7653ADF-5271-4D70-A0EF-66B7C197767D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HawkN.Iso.Currencies.Generators.Tests", "tests\HawkN.Iso.Currencies.Generators.Tests\HawkN.Iso.Currencies.Generators.Tests.csproj", "{F153F5DB-714A-45EA-915E-A0F8FCA8781C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC5B72D5-E6FE-426A-99D6-743D1FB30A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC5B72D5-E6FE-426A-99D6-743D1FB30A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC5B72D5-E6FE-426A-99D6-743D1FB30A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC5B72D5-E6FE-426A-99D6-743D1FB30A62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31A41FAA-909E-42C8-A3FF-F7263E7A81C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31A41FAA-909E-42C8-A3FF-F7263E7A81C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31A41FAA-909E-42C8-A3FF-F7263E7A81C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31A41FAA-909E-42C8-A3FF-F7263E7A81C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC52690-1D39-4943-B1BB-99285F27DD76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC52690-1D39-4943-B1BB-99285F27DD76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC52690-1D39-4943-B1BB-99285F27DD76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC52690-1D39-4943-B1BB-99285F27DD76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F7B4653-75E7-4A12-B4BF-2C35F2A6C807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F7B4653-75E7-4A12-B4BF-2C35F2A6C807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F7B4653-75E7-4A12-B4BF-2C35F2A6C807}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F7B4653-75E7-4A12-B4BF-2C35F2A6C807}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7653ADF-5271-4D70-A0EF-66B7C197767D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7653ADF-5271-4D70-A0EF-66B7C197767D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7653ADF-5271-4D70-A0EF-66B7C197767D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7653ADF-5271-4D70-A0EF-66B7C197767D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F153F5DB-714A-45EA-915E-A0F8FCA8781C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F153F5DB-714A-45EA-915E-A0F8FCA8781C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F153F5DB-714A-45EA-915E-A0F8FCA8781C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F153F5DB-714A-45EA-915E-A0F8FCA8781C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EC5B72D5-E6FE-426A-99D6-743D1FB30A62} = {B6BF62BA-6B50-4FD9-9CC2-7F0EC923E02F}
+		{31A41FAA-909E-42C8-A3FF-F7263E7A81C9} = {95D62D95-7877-468A-A4B6-990F8CCAE311}
+		{FFC52690-1D39-4943-B1BB-99285F27DD76} = {95D62D95-7877-468A-A4B6-990F8CCAE311}
+		{3F7B4653-75E7-4A12-B4BF-2C35F2A6C807} = {FBD7AC81-1E33-47DE-8C01-14A01DAE782E}
+		{D7653ADF-5271-4D70-A0EF-66B7C197767D} = {B6BF62BA-6B50-4FD9-9CC2-7F0EC923E02F}
+		{F153F5DB-714A-45EA-915E-A0F8FCA8781C} = {FBD7AC81-1E33-47DE-8C01-14A01DAE782E}
+	EndGlobalSection
+EndGlobal

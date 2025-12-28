@@ -1,0 +1,104 @@
+name: "CI - Build, Tests & Code Quality"
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - dev
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run CI manually'
+        required: false
+        default: "dev"
+
+jobs:
+  build-and-test:
+    name: Build, test and code quality
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+
+    env:
+      SOLUTION_NAME: src/HawkN.Iso.Currencies.Solution.sln
+      PACKAGE_CURRENCIES_PROJECT_PATH: src/packages/HawkN.Iso.Currencies/HawkN.Iso.Currencies.csproj
+      PACKAGE_CURRENCIES_NUSPEC_FILE_PATH: HawkN.Iso.Currencies.nuspec
+      OUTPUT_NUGET_DIR: nuget-packages
+      ARTIFACTS_DIR: artifacts
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.inputs.branch || github.ref }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        cache: true
+        cache-dependency-path: ${{ env.SOLUTION_NAME }}
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_NAME }}
+
+    - name: Perform build
+      run: dotnet build ${{ env.SOLUTION_NAME }} --no-restore --configuration Release
+
+    - name: Run Unit Tests
+      run: dotnet test ${{ env.SOLUTION_NAME }} --configuration Release --no-build --verbosity normal
+
+    - name: Check code formatting
+      run: dotnet format ${{ env.SOLUTION_NAME }} --no-restore --verify-no-changes --verbosity detailed
+
+    - name: Extract project version (HawkN.Iso.Currencies)
+      id: get_version
+      run: |
+        VERSION=$(sed -n 's/.*<\(VersionPrefix\|Version\)>\([^<]*\)<\/\1>.*/\2/p' ${{ env.PACKAGE_CURRENCIES_PROJECT_PATH }} | head -n 1)
+        if [ -z "$VERSION" ]; then
+        VERSION=$(date +%Y%m%d)
+        fi
+        echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
+        echo "Detected Version: $VERSION"
+      shell: bash
+
+    - name: Validate package creation (HawkN.Iso.Countries)
+      run: dotnet pack ${{ env.PACKAGE_CURRENCIES_PROJECT_PATH }} /p:NuspecFile=${{ env.PACKAGE_CURRENCIES_NUSPEC_FILE_PATH }} /p:ContinuousIntegrationBuild=true --configuration Release --no-build --output ${{ env.OUTPUT_NUGET_DIR }}
+
+    - name: Generate CHANGELOG.md
+      uses: orhun/git-cliff-action@v4
+      with:
+        config: cliff.toml
+        args: --verbose
+      env:
+        OUTPUT: CHANGELOG.md
+
+    - name: Prepare artifacts folder
+      run: |
+        mkdir -p ${{ env.ARTIFACTS_DIR }}
+        cp ${{ env.OUTPUT_NUGET_DIR }}/*.nupkg ${{ env.ARTIFACTS_DIR }}/
+        cp CHANGELOG.md ${{ env.ARTIFACTS_DIR }}/ || echo "Changelog not found"
+
+    - name: Upload all artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-${{ env.CURRENT_VERSION }}
+        path: ${{ env.ARTIFACTS_DIR }}

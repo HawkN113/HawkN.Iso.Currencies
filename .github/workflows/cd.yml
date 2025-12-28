@@ -1,0 +1,131 @@
+name: "CD - Publish NuGet Packages"
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  publish:
+    name: Publish to NuGet
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      actions: read
+    
+    env:
+      SOLUTION_NAME: src/HawkN.Iso.Currencies.Solution.sln
+      NUGET_ORG_USERNAME: HawkN113
+      
+      ## Iso.Currencies package settings
+      PACKAGE_CURRENCIES_PROJECT_PATH: src/packages/HawkN.Iso.Currencies/HawkN.Iso.Currencies.csproj
+      PACKAGE_CURRENCIES_NUSPEC_FILE_PATH: HawkN.Iso.Currencies.nuspec
+      PACKAGE_CURRENCIES_ID: HawkN.Iso.Currencies
+      
+      OUTPUT_NUGET_DIR: nuget-packages
+      NUGET_SOURCE_URL: https://api.nuget.org/v3/index.json
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      USER_ID: HawkN113
+
+    steps:
+      - name: Checkout repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: ${{ env.SOLUTION_NAME }}
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          TAG_NAME=${{ github.ref_name }}
+          VERSION=${TAG_NAME#v}
+          echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Check if package (${{ env.PACKAGE_CURRENCIES_ID }}) version already exists on NuGet.org
+        id: check_nuget
+        run: |
+          PACKAGE_CURRENCIES_ID_LOWER=$(echo "${{ env.PACKAGE_CURRENCIES_ID }}" | tr '[:upper:]' '[:lower:]')
+          STATUS_CODE=$(curl -s -o /dev/null -I -w "%{http_code}" "https://api.nuget.org/v3-flatcontainer/${PACKAGE_CURRENCIES_ID_LOWER}/${{ env.CURRENT_VERSION }}/index.json")
+          if [ "$STATUS_CODE" -eq 200 ]; then
+            echo "Error: Version ${{ env.CURRENT_VERSION }} already exists on NuGet.org!"
+            exit 1
+          fi
+        shell: bash
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_NAME }}
+
+      - name: Perform build
+        run: dotnet build ${{ env.SOLUTION_NAME }} --no-restore --configuration Release
+
+      - name: Build and Pack (HawkN.Iso.Currencies)
+        run: |
+          dotnet pack ${{ env.PACKAGE_CURRENCIES_PROJECT_PATH }} \
+            --configuration Release \
+            /p:NuspecFile=${{ env.PACKAGE_CURRENCIES_NUSPEC_FILE_PATH }} \
+            /p:Version=${{ env.CURRENT_VERSION }} \
+            /p:ContinuousIntegrationBuild=true \
+            --output ${{ env.OUTPUT_NUGET_DIR }}
+
+      - name: Generate Release Changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --latest
+        env:
+          OUTPUT: CHANGELOG_RELEASE.md
+
+      - name: Generate Full CHANGELOG.md
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+        env:
+          OUTPUT: CHANGELOG.md
+
+      - name: Commit CHANGELOG.md (if changed)
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git pull origin ${{ github.event.repository.default_branch }} --rebase
+
+          if ! git diff --exit-code CHANGELOG.md; then
+            git add CHANGELOG.md
+            git commit -m "docs(changelog): update for version ${{ env.CURRENT_VERSION }}"
+            git push origin HEAD:${{ github.event.repository.default_branch }}
+          else
+            echo "No changes in CHANGELOG.md"
+          fi
+        shell: bash
+
+      - name: Create GitHub Release (HawkN.Iso.Currencies)
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG_RELEASE.md
+          files: ${{ env.OUTPUT_NUGET_DIR }}/${{ env.PACKAGE_CURRENCIES_ID }}.${{ env.CURRENT_VERSION }}.nupkg
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ env.USER_ID }}
+
+      - name: Publish package (HawkN.Iso.Currencies) to NuGet.org (Trusted Publishing)
+        run: |
+          dotnet nuget push "${{ env.OUTPUT_NUGET_DIR }}/${{ env.PACKAGE_CURRENCIES_ID }}.${{ env.CURRENT_VERSION }}.nupkg" \
+            --api-key ${{steps.login.outputs.NUGET_API_KEY}} \
+            --source ${{ env.NUGET_SOURCE_URL }}
+        shell: bash

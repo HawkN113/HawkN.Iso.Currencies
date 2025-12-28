@@ -1,0 +1,16 @@
+**/.idea/*
+
+src/packages/HawkN.Iso.Currencies/obj/**
+src/packages/HawkN.Iso.Currencies/bin/**
+src/packages/HawkN.Iso.Currencies.Generators/obj/**
+src/packages/HawkN.Iso.Currencies.Generators/bin/**
+src/tests/HawkN.Iso.Currencies.Tests/obj/**
+src/tests/HawkN.Iso.Currencies.Tests/bin/**
+src/tests/HawkN.Iso.Currencies.Generators.Tests/obj/**
+src/tests/HawkN.Iso.Currencies.Generators.Tests/bin/**
+src/samples/HawkN.Iso.Currencies.Sample.Console/obj/**
+src/samples/HawkN.Iso.Currencies.Sample.Console/bin/**
+src/samples/HawkN.Iso.Currencies.Sample.WebApi/obj/**
+src/samples/HawkN.Iso.Currencies.Sample.WebApi/bin/**
+
+**/*.user
