@@ -30,10 +30,8 @@ internal sealed class SupplementalDataHandler(string xmlContent)
 
         foreach (var code in regionCurrencies)
         {
-            if (!currencies.ContainsKey(code))
-            {
+            if (!currencies.TryGetValue(code, out _))
                 currencies[code] = new CurrencyRow { Code = code };
-            }
         }
     }
 }
