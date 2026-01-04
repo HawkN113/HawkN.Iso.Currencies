@@ -35,7 +35,7 @@ internal sealed class CurrencyService : ICurrencyService
         var isExistCurrency = Exists(code);
         result = isExistCurrency
             ? ValidationResult.Success()
-            : ValidationResult.Invalid($"The currency code '{code.ToString()}' does not exist");
+            : ValidationResult.Invalid($"The currency code '{code}' does not exist");
         return isExistCurrency;
     }
 
