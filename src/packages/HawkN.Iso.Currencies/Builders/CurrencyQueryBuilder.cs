@@ -55,19 +55,53 @@ internal sealed class CurrencyQueryBuilder :
 
     public IReadOnlyList<Currency> Build()
     {
-        Func<Currency, bool> baseFilter = c =>
-            _includedTypes.Contains(c.CurrencyType!.Value) &&
-            (_withCodes.Count == 0 || _withCodes.Contains(c.Code)) &&
-            (_withoutCodes.Count == 0 || !_withoutCodes.Contains(c.Code)) &&
-            (_withNames.Count == 0 || _withNames.Contains(c.Name)) &&
-            (_withoutNames.Count == 0 || !_withoutNames.Contains(c.Name)) &&
-            (_withNumericCodes.Count == 0 || (!string.IsNullOrEmpty(c.NumericCodeString) && _withNumericCodes.Contains(c.NumericCodeString!))) &&
-            (_withoutNumericCodes.Count == 0 || (!string.IsNullOrEmpty(c.NumericCodeString) && !_withoutNumericCodes.Contains(c.NumericCodeString)));
+        Func<Currency, bool> baseFilter = MatchesAllBaseFilters;
 
         return _actualCurrencies
             .Where(baseFilter)
             .Where(c => _customPredicates.All(p => p(c)))
             .ToList();
+    }
+
+    private bool MatchesAllBaseFilters(Currency currency)
+    {
+        return MatchesIncludedTypes(currency)
+               && MatchesCodeFilters(currency)
+               && MatchesNameFilters(currency)
+               && MatchesNumericCodeFilters(currency);
+    }
+
+    private bool MatchesIncludedTypes(Currency currency)
+    {
+        return _includedTypes.Contains(currency.CurrencyType!.Value);
+    }
+
+    private bool MatchesCodeFilters(Currency currency)
+    {
+        return (_withCodes.Count == 0 || _withCodes.Contains(currency.Code))
+               && (_withoutCodes.Count == 0 || !_withoutCodes.Contains(currency.Code));
+    }
+
+    private bool MatchesNameFilters(Currency currency)
+    {
+        return (_withNames.Count == 0 || _withNames.Contains(currency.Name))
+               && (_withoutNames.Count == 0 || !_withoutNames.Contains(currency.Name));
+    }
+
+    private bool MatchesNumericCodeFilters(Currency currency)
+    {
+        var numericCode = currency.NumericCodeString;
+        var hasNumericCode = !string.IsNullOrEmpty(numericCode);
+
+        var matchesWithNumericCodes =
+            _withNumericCodes.Count == 0
+            || (hasNumericCode && _withNumericCodes.Contains(numericCode!));
+
+        var matchesWithoutNumericCodes =
+            _withoutNumericCodes.Count == 0
+            || (hasNumericCode && !_withoutNumericCodes.Contains(numericCode!));
+
+        return matchesWithNumericCodes && matchesWithoutNumericCodes;
     }
 
     IIncludeFilterBuilder IIncludeFilterBuilder.Codes(params string[] codes)
