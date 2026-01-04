@@ -26,12 +26,12 @@ internal sealed class SupplementalDataHandler(string xmlContent)
                                 string.IsNullOrEmpty(c.Attribute("to")?.Value))
                     .Select(c => c.Attribute("iso4217")!.Value))
             .Where(code => !string.IsNullOrEmpty(code))
-            .Distinct(StringComparer.OrdinalIgnoreCase);
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Where(code => !currencies.ContainsKey(code));
 
         foreach (var code in regionCurrencies)
         {
-            if (!currencies.TryGetValue(code, out _))
-                currencies[code] = new CurrencyRow { Code = code };
+            currencies[code] = new CurrencyRow { Code = code };
         }
     }
 }
