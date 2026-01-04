@@ -102,5 +102,12 @@
   { "Ccy": "USD", "CcyNm": "US Dollar" },
   { "Ccy": "ZWL", "CcyNm": "Zimbabwe Dollar" },
   { "Ccy": "CNY", "CcyNm": "Chinese Yuan" },
-  { "Ccy": "CVE", "CcyNm": "Cape Verde Escudo" }
+  { "Ccy": "CVE", "CcyNm": "Cape Verde Escudo" },
+  { "Ccy": "BAM", "CcyNm": "Convertible Mark" },
+  { "Ccy": "AZN", "CcyNm": "Azerbaijan Manat" },
+  { "Ccy": "CLF", "CcyNm": "Unidad de Fomento" },
+  { "Ccy": "AED", "CcyNm": "UAE Dirham" },
+  { "Ccy": "SHP", "CcyNm": "Saint Helena Pound" },
+  { "Ccy": "COU", "CcyNm": "Unidad de Valor Real" },
+  { "Ccy": "UYW", "CcyNm": "Unidad Previsional" }
 ]

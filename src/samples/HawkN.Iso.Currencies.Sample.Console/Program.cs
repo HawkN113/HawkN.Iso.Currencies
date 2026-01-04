@@ -27,7 +27,11 @@ try
 
     // ---- Get all existing currencies ----
     Console.WriteLine(" ---- All existing currencies (special, metal, reserve, fiat) ---- ");
-    foreach (var currency in currencyService!.Query()
+    Console.WriteLine(
+        "| Currency code  | Currency name                            |");
+    Console.WriteLine(
+        "|:---------------:|:-----------------------------------------:|");
+    foreach (var currency in currencyService.Query()
                  .Includes
                  .Type(CurrencyType.Fiat)
                  .Type(CurrencyType.SpecialUnit)
@@ -36,12 +40,12 @@ try
                  .Build())
     {
         Console.WriteLine(
-            $"\t{currency.Code} - {currency.Name}");
+            $"| {currency.Code}            | {currency.Name}                               |");
     }
 
     // ---- Get fiat currencies ---- 
     Console.WriteLine(" ---- Fiat currencies ---- ");
-    foreach (var currency in currencyService!
+    foreach (var currency in currencyService
                  .Query()
                  .Includes.Type(CurrencyType.Fiat)
                  .Build())
@@ -51,7 +55,7 @@ try
 
     // ---- Get currencies by query ---- 
     Console.WriteLine(" ---- Query: Includes only `EUR` and `USD` in the list ---- ");
-    foreach (var currency in currencyService!.Query()
+    foreach (var currency in currencyService.Query()
                  .Includes
                  .Type(CurrencyType.Fiat)
                  .With(w => w.Codes(nameof(CurrencyCode.EUR), nameof(CurrencyCode.USD)))
@@ -63,7 +67,7 @@ try
 
     // ---- Get currencies by advanced query (LINQ) ---- 
     Console.WriteLine(" ---- Advanced Query (LINQ): Includes only `EUR` and `USD` in the list ---- ");
-    foreach (var currency in currencyService!.Query()
+    foreach (var currency in currencyService.Query()
                  .Includes
                  .Type(CurrencyType.Fiat)
                  .Where(q => q.Code is nameof(CurrencyCode.EUR) or nameof(CurrencyCode.USD))
@@ -71,17 +75,6 @@ try
     {
         Console.WriteLine(
             $"\t{currency.Code} - {currency.Name}");
-    }
-
-    // ---- Get historical currencies ---- 
-    Console.WriteLine(" ---- Historical (Withdrawal) currencies ---- ");
-    foreach (var currency in currencyService.GetAllHistorical())
-    {
-        var withdrawalDate = currency.WithdrawalDate.HasValue
-            ? currency.WithdrawalDate.Value.ToString("yyyy MMMM dd")
-            : "Unknown date";
-        Console.WriteLine(
-            $"\t{currency.Code} - {currency.Name} ({withdrawalDate})");
     }
 
     // -------------------------

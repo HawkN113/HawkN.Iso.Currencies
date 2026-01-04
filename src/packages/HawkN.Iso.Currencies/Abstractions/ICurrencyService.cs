@@ -39,19 +39,6 @@ public interface ICurrencyService
     Currency? Get(CurrencyCode code);
 
     /// <summary>
-    /// Gets historical (withdrawn) currency information by string value.
-    /// </summary>
-    /// <param name="value">Currency code or name.</param>
-    /// <returns>Currency object or null if not found.</returns>
-    Currency? GetHistorical(string value);
-
-    /// <summary>
-    /// Retrieves all historical (withdrawn) currencies defined by ISO 4217.
-    /// </summary>
-    /// <returns>An array of <see cref="Currency"/> objects representing withdrawn currencies.</returns>
-    Currency[] GetAllHistorical();
-
-    /// <summary>
     /// Starts building a query for actual currencies with fluent filtering and sorting.
     /// </summary>
     ICurrencyQueryStart Query();

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Text;
-using HawkN.Iso.Currencies.Generators.Handlers;
 using HawkN.Iso.Currencies.Generators.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -31,39 +30,40 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
         ErrorFactory.Clear();
-
-        var jsonProvider = context.CompilationProvider.Select((_, _) =>
-        {
-            try
-            {
-                return LoadJsonResources(Assembly.GetExecutingAssembly());
-            }
-            catch (Exception ex)
-            {
-                var message = $"{Constants.ErrorMark}:{ex.Message}";
-                return (message, message, message);
-            }
-        });
-
+        var jsonProvider = context.CompilationProvider.Select(ReadDataResource);
         context.RegisterSourceOutput(jsonProvider, (spc, tuple) => GenerateSourceOutput(tuple, spc));
     }
 
-    private new void GenerateSourceOutput((string, string, string) tuple, SourceProductionContext spc)
+    static (string, string, string, string) ReadDataResource(Compilation compilation, CancellationToken ct)
     {
         try
         {
-            var (originalJson, replacementJson, historicalJson) = tuple;
+            return LoadResources(Assembly.GetExecutingAssembly());
+        }
+        catch (InvalidOperationException ex)
+        {
+            var errorMsg = $"{Constants.ErrorMark}:{ex.Message}";
+            return (errorMsg, errorMsg, errorMsg, errorMsg);
+        }
+    }
 
-            if (HasResourceErrors(originalJson, replacementJson, historicalJson))
+    private void GenerateSourceOutput((string, string, string, string) tuple, SourceProductionContext spc)
+    {
+        try
+        {
+            var (originalXml, translationsXml, replacementJson, currencyCodesCsv) = tuple;
+
+            if (HasResourceErrors(originalXml, translationsXml, replacementJson, currencyCodesCsv))
             {
                 AddStubIfErrors(spc, HintName, StubSource, GeneratorType.Currency);
                 return;
             }
 
-            var loader = new CurrencyLoader(originalJson, replacementJson, historicalJson);
+            var loader = new CurrencyDataLoader(originalXml, translationsXml, replacementJson, currencyCodesCsv);
             var sb = CreateSourceBuilder(
                 Constants.GeneratorName,
-                Constants.DefaultNamespace
+                Constants.DefaultNamespace,
+                Constants.ExtendedSourceData
             );
 
             if (string.IsNullOrEmpty(loader.ActualCurrencyData.PublishedDate))
@@ -73,27 +73,24 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
             else
             {
                 sb.AppendLine("    /// <summary>")
-                  .AppendLine("    /// Currency codes ISO4217")
-                  .AppendLine($"    /// Last published at {loader.ActualCurrencyData.PublishedDate}.")
-                  .AppendLine("    /// </summary>");
+                    .AppendLine("    /// Currency codes ISO4217")
+                    .AppendLine($"    /// Last published at {loader.ActualCurrencyData.PublishedDate}.")
+                    .AppendLine("    /// </summary>");
             }
 
             sb.AppendLine("    public enum CurrencyCode")
-              .AppendLine("    {")
-              .AppendLine("        /// <summary> Unknown currency code </summary>")
-              .AppendLine("        None,");
+                .AppendLine("    {")
+                .AppendLine("        /// <summary> Unknown currency code </summary>")
+                .AppendLine("        None,");
 
             foreach (var c in loader.ActualCurrencyData.Currencies)
             {
                 sb.AppendLine($"        /// <summary> {c.Name} </summary>");
-                if (c.IsHistoric && !string.IsNullOrEmpty(c.WithdrawalDate))
-                    sb.AppendLine($"        [Obsolete(\"Currency withdrawn on {c.WithdrawalDate}\")]");
-
                 sb.AppendLine($"        {c.Code},");
             }
 
             sb.AppendLine("    }")
-              .AppendLine("}");
+                .AppendLine("}");
 
             spc.AddSource(HintName, SourceText.From(sb.ToString(), Encoding.UTF8));
         }
@@ -102,7 +99,7 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
             ErrorFactory.Create(new ErrorDescription
             {
                 DiagnosticDescriptor = new DiagnosticDescriptor(
-                    id: DiagnosticDescriptors.UnexpectedErrorId,
+                    id: CreateDescriptorId("0"),
                     title: Constants.DiagnosticsTitle,
                     messageFormat: $"Unexpected exception: {ex.Message}",
                     category: string.Empty,
@@ -115,7 +112,7 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
         }
     }
 
-    private bool HasResourceErrors(string originalJson, string replacementJson, string historicalJson)
+    private bool HasResourceErrors(string originalXml, string translationsXml, string replacementJson, string currencyCodesCsv)
     {
         var hasError = false;
 
@@ -124,7 +121,7 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
             ErrorFactory.Create(new ErrorDescription
             {
                 DiagnosticDescriptor = new DiagnosticDescriptor(
-                    id: DiagnosticDescriptors.ResourceLoadErrorId,
+                    id: CreateDescriptorId("1"),
                     title: Constants.DiagnosticsTitle,
                     messageFormat: message,
                     category: string.Empty,
@@ -134,9 +131,9 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
             });
         }
 
-        if (originalJson.StartsWith(Constants.ErrorMark, StringComparison.Ordinal))
+        if (originalXml.StartsWith(Constants.ErrorMark, StringComparison.Ordinal))
         {
-            ReportError($"Failed to load original resource: {originalJson.Substring(9)}", GeneratorType.Currency);
+            ReportError($"Failed to load original resource: {originalXml.Substring(8)}", GeneratorType.Currency);
             hasError = true;
         }
         if (replacementJson.StartsWith(Constants.ErrorMark, StringComparison.Ordinal))
@@ -144,9 +141,14 @@ public class CurrencyCodeGenerator : BaseIncrementalGenerator
             ReportError($"Failed to load replacement resource: {replacementJson.Substring(9)}", GeneratorType.Currency);
             hasError = true;
         }
-        if (historicalJson.StartsWith(Constants.ErrorMark, StringComparison.Ordinal))
+        if (translationsXml.StartsWith(Constants.ErrorMark, StringComparison.Ordinal))
         {
-            ReportError($"Failed to load historical resource: {historicalJson.Substring(9)}", GeneratorType.Currency);
+            ReportError($"Failed to load translations resource: {translationsXml.Substring(9)}", GeneratorType.Currency);
+            hasError = true;
+        }
+        if (currencyCodesCsv.StartsWith(Constants.ErrorMark, StringComparison.Ordinal))
+        {
+            ReportError($"Failed to load currency codes resource: {currencyCodesCsv.Substring(9)}", GeneratorType.Currency);
             hasError = true;
         }
 

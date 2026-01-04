@@ -10,7 +10,7 @@ public class BaseIncrementalGeneratorTests
         const string expectedNamespace = "TestNamespace";
 
         // Act
-        var sb = BaseIncrementalGenerator.CreateSourceBuilder(generatorName, expectedNamespace);
+        var sb = BaseIncrementalGenerator.CreateSourceBuilder(generatorName, expectedNamespace, []);
         var result = sb.ToString();
 
         // Assert
@@ -28,7 +28,7 @@ public class BaseIncrementalGeneratorTests
         var references = new[] { "System", "System.Collections.Generic" };
 
         // Act
-        var sb = BaseIncrementalGenerator.CreateSourceBuilder("Gen", "Ns", references);
+        var sb = BaseIncrementalGenerator.CreateSourceBuilder("Gen", "Ns", [], references);
         var result = sb.ToString();
 
         // Assert
@@ -40,7 +40,7 @@ public class BaseIncrementalGeneratorTests
     public void CreateSourceBuilder_ShouldNotIncludeReferencesWhenNull()
     {
         // Act
-        var sb = BaseIncrementalGenerator.CreateSourceBuilder("Gen", "Ns", null);
+        var sb = BaseIncrementalGenerator.CreateSourceBuilder("Gen", "Ns", [], null);
         var result = sb.ToString();
 
         // Assert

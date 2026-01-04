@@ -44,15 +44,6 @@ static class CurrencyEndpointExtensions
                 return o;
             });
 
-        app.MapGet("/historical/currencies", CurrencyHandler.GetHistoricalCurrencies)
-            .WithName("GetHistoricalCurrencies")
-            .WithOpenApi(o =>
-            {
-                o.Summary = "Get historical currencies";
-                o.Description = "Returns a short code, name and withdrawal date.";
-                return o;
-            });
-
         return app;
     }
 }

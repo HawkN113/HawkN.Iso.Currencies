@@ -6,12 +6,6 @@ Accept: application/json
 
 ###
 
-### Get historical currencies
-GET {{HawkN.Iso.Currencies.Sample.WebApi_HostAddress}}/historical/currencies
-Accept: application/json
-
-###
-
 ### Get fiat currency by code (EUR, USD, etc.)
 GET {{HawkN.Iso.Currencies.Sample.WebApi_HostAddress}}/fiat/currency?code=EUR
 Accept: application/json
