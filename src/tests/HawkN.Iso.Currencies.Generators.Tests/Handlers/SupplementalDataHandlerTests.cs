@@ -32,13 +32,13 @@ public class SupplementalDataHandlerTests
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
 
-        Assert.True(result.ContainsKey("USD"));
-        Assert.True(result.ContainsKey("EUR"));
-        Assert.True(result.ContainsKey("JPY"));
+        Assert.True(result.TryGetValue("USD", out var usd));
+        Assert.True(result.TryGetValue("EUR", out var eur));
+        Assert.True(result.TryGetValue("JPY", out var jpy));
 
-        Assert.Equal("USD", result["USD"].Code);
-        Assert.Equal("EUR", result["EUR"].Code);
-        Assert.Equal("JPY", result["JPY"].Code);
+        Assert.Equal("USD", usd.Code);
+        Assert.Equal("EUR", eur.Code);
+        Assert.Equal("JPY", jpy.Code);
     }
 
     [Fact]

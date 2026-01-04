@@ -17,31 +17,23 @@ internal sealed class SupplementalDataHandler(string xmlContent)
 
     private void ParseRegionCurrencies(Dictionary<string, CurrencyRow> currencies)
     {
-        var regionCurrencies =
-            _doc.Descendants("currencyData")
-                .Descendants("region")
-                .SelectMany(region =>
-                    region.Elements("currency")
-                        .Where(c => !string.IsNullOrEmpty(c.Attribute("iso4217")?.Value) &&
-                                    string.IsNullOrEmpty(c.Attribute("to")?.Value))
-                        .Select(c => new
-                        {
-                            Code = c.Attribute("iso4217")?.Value,
-                        }))
-                .Distinct();
+        var regionCurrencies = _doc
+            .Descendants("currencyData")
+            .Descendants("region")
+            .SelectMany(region =>
+                region.Elements("currency")
+                    .Where(c => !string.IsNullOrEmpty(c.Attribute("iso4217")?.Value) &&
+                                string.IsNullOrEmpty(c.Attribute("to")?.Value))
+                    .Select(c => c.Attribute("iso4217")!.Value))
+            .Where(code => !string.IsNullOrEmpty(code))
+            .Distinct(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var code in regionCurrencies.Select(entry => entry.Code))
+        foreach (var code in regionCurrencies)
         {
-            if (string.IsNullOrEmpty(code))
-                continue;
-
-            if (currencies.TryGetValue(code!, out var currency)) continue;
-
-            currency = new CurrencyRow
+            if (!currencies.ContainsKey(code))
             {
-                Code = code!
-            };
-            currencies[code!] = currency;
+                currencies[code] = new CurrencyRow { Code = code };
+            }
         }
     }
 }
