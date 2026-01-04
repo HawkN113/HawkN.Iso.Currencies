@@ -1,0 +1,72 @@
+name: "CI – CodeQL security analysis"
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    types: [opened,synchronize,reopened]
+    branches:
+      - main
+      - dev
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the security scan on'
+        required: false
+        default: "dev" 
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      packages: read
+
+    env:
+      SOLUTION_NAME: src/HawkN.Iso.Currencies.Solution.sln
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          queries: security-extended,security-and-quality
+          config: |
+            paths-ignore:
+              - '**/Tests/**'
+              - '**/*.Tests.cs'
+              - '**/*Tests.cs'
+              - '**/tests/**'
+              - '**/samples/**'
+              - '**/bin/**'
+              - '**/obj/**'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: ${{ env.SOLUTION_NAME }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_NAME }}
+
+      - name: Perform build for CodeQL
+        run: dotnet build ${{ env.SOLUTION_NAME }} --configuration Release --no-restore -p:UseSharedCompilation=false
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:csharp"

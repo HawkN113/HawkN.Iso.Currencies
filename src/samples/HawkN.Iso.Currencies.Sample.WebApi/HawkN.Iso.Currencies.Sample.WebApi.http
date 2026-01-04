@@ -1,0 +1,27 @@
+@HawkN.Iso.Currencies.Sample.WebApi_HostAddress = http://localhost:5165
+
+### Get all fiat currencies
+GET {{HawkN.Iso.Currencies.Sample.WebApi_HostAddress}}/fiat/currencies
+Accept: application/json
+
+###
+
+### Get fiat currency by code (EUR, USD, etc.)
+GET {{HawkN.Iso.Currencies.Sample.WebApi_HostAddress}}/fiat/currency?code=EUR
+Accept: application/json
+
+###
+
+### Get precious metals (XAG, XAU, XPD, XPT)
+GET {{HawkN.Iso.Currencies.Sample.WebApi_HostAddress}}/preciousMetals/currencies
+Accept: application/json
+
+###
+
+### Get special currencies (XBA, XSU, XXX, etc.)
+GET {{HawkN.Iso.Currencies.Sample.WebApi_HostAddress}}/special/currencies
+Accept: application/json
+
+###
+
+

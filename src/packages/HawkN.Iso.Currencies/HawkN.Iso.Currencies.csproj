@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <FileVersion>8.0.0.0</FileVersion>
+        <OutputType>Library</OutputType>
+        <Copyright>Copyright © 2025 Nikolay Selyutin (HawkN113)</Copyright>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+        <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+        <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+        <Optimize>true</Optimize>
+        <PublicSign>false</PublicSign>
+        <TargetFramework>net8.0</TargetFramework>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IncludeSymbols>false</IncludeSymbols>
+        <IsPackable>true</IsPackable>
+        <VersionPrefix>8.0.0</VersionPrefix>
+        <!-- Use when need to update 'CurrencyCode' and 'LocalCurrencyDatabase' -->
+        <GenerateCurrencyFiles Condition="'$(GenerateCurrencyFiles)' == ''">false</GenerateCurrencyFiles>
+        <EmitCompilerGeneratedFiles>$(GenerateCurrencyFiles)</EmitCompilerGeneratedFiles>
+        <CurrencyCodeFile>$(MSBuildProjectDirectory)\CurrencyCode.cs</CurrencyCodeFile>
+        <LocalDatabaseFile>$(MSBuildProjectDirectory)\LocalCurrencyDatabase.cs</LocalDatabaseFile>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\Generated</CompilerGeneratedFilesOutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>embedded</DebugType>
+        <DocumentationFile>bin\Debug\HawkN.Iso.Currencies.xml</DocumentationFile>
+        <WarningsAsErrors>;NU1605</WarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DebugType>embedded</DebugType>
+        <DocumentationFile>bin\Release\HawkN.Iso.Currencies.xml</DocumentationFile>
+        <WarningsAsErrors>;NU1605</WarningsAsErrors>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="Package\Content\HawkN.Iso.Currencies.ico.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+        <None Update="Package\Content\README.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="HawkN.Iso.Currencies.Tests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="CurrencyCode.cs" />
+        <Compile Remove="LocalCurrencyDatabase.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(GenerateCurrencyFiles)' != 'true'">
+        <Compile Include="CurrencyCode.cs" Condition="Exists('CurrencyCode.cs')" />
+        <Compile Include="LocalCurrencyDatabase.cs" Condition="Exists('LocalCurrencyDatabase.cs')" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(GenerateCurrencyFiles)' == 'true'">
+        <ProjectReference Include="..\..\packages\HawkN.Iso.Currencies.Generators\HawkN.Iso.Currencies.Generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+    <Target Name="CleanGeneratedFilesBeforeBuild" BeforeTargets="BeforeBuild" Condition="'$(GenerateCurrencyFiles)' == 'true'">
+        <Delete Files="CurrencyCode.cs;LocalCurrencyDatabase.cs" />
+    </Target>
+    <Target Name="CopyGeneratedFiles" AfterTargets="CoreCompile" Condition="'$(GenerateCurrencyFiles)' == 'true'">
+        <ItemGroup>
+            <_GeneratedFiles Include="$(CompilerGeneratedFilesOutputPath)\**\*.g.cs" />
+        </ItemGroup>
+        <Error Condition="'@(_GeneratedFiles)' == ''" Text="Source Generator did not produce any files in $(CompilerGeneratedFilesOutputPath)" />
+        <Copy SourceFiles="@(_GeneratedFiles)" DestinationFiles="@(_GeneratedFiles->'$(MSBuildProjectDirectory)\%(Filename).cs')" OverwriteReadOnlyFiles="true" />
+        <Move SourceFiles="$(MSBuildProjectDirectory)\CurrencyCode.g.cs" DestinationFiles="$(MSBuildProjectDirectory)\CurrencyCode.cs" Condition="Exists('$(MSBuildProjectDirectory)\CurrencyCode.g.cs')" />
+        <Move SourceFiles="$(MSBuildProjectDirectory)\LocalCurrencyDatabase.g.cs" DestinationFiles="$(MSBuildProjectDirectory)\LocalCurrencyDatabase.cs" Condition="Exists('$(MSBuildProjectDirectory)\LocalCurrencyDatabase.g.cs')" />
+        <ItemGroup>
+            <Compile Include="CurrencyCode.cs" />
+            <Compile Include="LocalCurrencyDatabase.cs" />
+            <FileWrites Include="CurrencyCode.cs;LocalCurrencyDatabase.cs" />
+        </ItemGroup>
+        <Message Text="Successfully materialized files to project root." Importance="high" />
+    </Target>
+</Project>

@@ -1,0 +1,89 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Private>true</Private>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputItemType>Analyzer</OutputItemType>
+        <IsRoslynAnalyzer>true</IsRoslynAnalyzer>
+        <IsRoslinComponent>true</IsRoslinComponent>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <PublishSingleFile>false</PublishSingleFile>
+        <FileVersion>8.0.0.0</FileVersion>
+        <Copyright>Copyright © 2025 Nikolay Selyutin (HawkN113)</Copyright>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+        <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+        <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+        <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IsPackable>false</IsPackable>
+        <DownloadCldrFiles>false</DownloadCldrFiles>
+        <DownloadCodesFiles>false</DownloadCodesFiles>
+        <CldrVersion>release-48</CldrVersion>
+        <IsoCurrenciesEnTranslationsUrl>https://raw.githubusercontent.com/unicode-org/cldr/$(CldrVersion)/common/main/en.xml</IsoCurrenciesEnTranslationsUrl>
+        <IsoCurrenciesUrl>https://raw.githubusercontent.com/unicode-org/cldr/$(CldrVersion)/common/supplemental/supplementalData.xml</IsoCurrenciesUrl>
+        <IsoCurrenciesCodesUrl>https://raw.githubusercontent.com/datasets/currency-codes/main/data/codes-all.csv</IsoCurrenciesCodesUrl>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Content\list-replacement-currency-names.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Content\supplementalData.xml" />
+      <None Remove="Content\Translations\en.xml" />
+      <None Remove="Content\Datasets\currency-codes.csv" />
+      <None Remove="Content\СurrencyСodes.csv" />
+      <EmbeddedResource Include="Content\СurrencyСodes.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="HawkN.Iso.Currencies.Generators.Tests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Content\SupplementalData.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Content\Translations\EN.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <Target Name="DownloadIsoCurrenciesData" BeforeTargets="BeforeCompile"  Condition="'$(DownloadCldrFiles)' == 'true'">
+        <Error Condition="'$(IsoCurrenciesUrl)' == ''" Text="IsoCurrenciesUrl property is empty. Cannot download data." />
+        <Error Condition="'$(IsoCurrenciesEnTranslationsUrl)' == ''" Text="IsoCurrenciesEnTranslationsUrl property is empty. Cannot download data." />
+        <Message Text="Starting CLDR ISO currencies codes download from: $(IsoCurrenciesUrl)" Importance="high" />
+        <Message Text="Starting CLDR ISO currencies transaltions download from: $(IsoCurrenciesEnTranslations)" Importance="high" />
+        <MakeDir Directories="$(ProjectDir)Content" Condition="!Exists('$(ProjectDir)Content')" />
+        <MakeDir Directories="$(ProjectDir)Content\Translations" Condition="!Exists('$(ProjectDir)Content\Translations')" />
+        <DownloadFile SourceUrl="$(IsoCurrenciesUrl)" DestinationFolder="$(ProjectDir)Content" DestinationFileName="SupplementalData.xml" SkipUnchangedFiles="true">
+            <Output TaskParameter="DownloadedFile" ItemName="DownloadedIsoCurrenciesFile" />
+        </DownloadFile>
+        <Message Text="CLDR ISO currency data has been downloaded" Importance="high" />
+        <DownloadFile SourceUrl="$(IsoCurrenciesEnTranslationsUrl)" DestinationFolder="$(ProjectDir)Content\Translations" DestinationFileName="EN.xml" SkipUnchangedFiles="true">
+            <Output TaskParameter="DownloadedFile" ItemName="DownloadedIsoEnTranslationsCurrenciesFile" />
+        </DownloadFile>
+        <Message Text="CLDR ISO currency translation data has been downloaded" Importance="high" />
+    </Target>
+    <Target Name="DownloadIsoCurrenciesCodesData" BeforeTargets="BeforeCompile"  Condition="'$(DownloadCodesFiles)' == 'true'">
+        <Error Condition="'$(IsoCurrenciesCodesUrl)' == ''" Text="IsoCurrenciesCodesUrl property is empty. Cannot download data." />
+        <Message Text="Starting CLDR ISO currencies codes download from: $(IsoCurrenciesCodesUrl)" Importance="high" />
+        <MakeDir Directories="$(ProjectDir)Content" Condition="!Exists('$(ProjectDir)Content')" />
+        <DownloadFile SourceUrl="$(IsoCurrenciesCodesUrl)" DestinationFolder="$(ProjectDir)Content" DestinationFileName="СurrencyСodes.csv" SkipUnchangedFiles="true">
+            <Output TaskParameter="DownloadedFile" ItemName="DownloadedIsoCurrenciesCodesFile" />
+        </DownloadFile>
+        <Message Text="Currencies codes has been downloaded" Importance="high" />
+    </Target>
+</Project>
