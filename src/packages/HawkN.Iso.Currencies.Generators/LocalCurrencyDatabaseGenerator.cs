@@ -106,6 +106,11 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
             }
             spc.AddSource(HintName, SourceText.From(sb.ToString(), Encoding.UTF8));
         }
+        catch (OperationCanceledException)
+        {
+            // Let the host (Roslyn) handle cancellations properly.
+            throw;
+        }
         catch (Exception ex)
         {
             ErrorFactory.Create(new ErrorDescription
