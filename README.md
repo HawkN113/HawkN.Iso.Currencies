@@ -38,7 +38,7 @@
 ### Install via NuGet
 
 ```bash
-dotnet add package HawkN.Iso.Currencies.Core
+dotnet add package HawkN.Iso.Currencies
 ```
 ---
 
