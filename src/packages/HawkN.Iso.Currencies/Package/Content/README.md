@@ -130,186 +130,41 @@ var validResult = currencyService.TryValidate(CurrencyCode.AFN, out var validate
 ```
 ---
 
-### Supported fiat currencies
-Last updated at 27.11.2025
-- AED (UAE Dirham)
-- AFN (Afghani)
-- ALL (Albanian Lek)
-- AMD (Armenian Dram)
-- AOA (Angolan Kwanza)
-- ARS (Argentine Peso)
-- AUD (Australian Dollar)
-- AWG (Aruban Florin)
-- AZN (Azerbaijan Manat)
-- BAM (Convertible Mark)
-- BBD (Barbados Dollar)
-- BDT (Bangladeshi Taka)
-- BGN (Bulgarian Lev)
-- BHD (Bahraini Dinar)
-- BIF (Burundi Franc)
-- BMD (Bermudian Dollar)
-- BND (Brunei Dollar)
-- BOB (Bolivian Boliviano)
-- BOV (Bolivian Mvdol)
-- BRL (Brazilian Real)
-- BSD (Bahamian Dollar)
-- BTN (Bhutanese Ngultrum)
-- BWP (Botswana Pula)
-- BYN (Belarusian Ruble)
-- BZD (Belize Dollar)
-- CAD (Canadian Dollar)
-- CDF (Congolese Franc)
-- CHE (WIR Euro)
-- CHF (Swiss Franc)
-- CHW (WIR Franc)
-- CLF (Unidad de Fomento)
-- CLP (Chilean Peso)
-- CNY (Chinese Yuan)
-- COP (Colombian Peso)
-- COU (Unidad de Valor Real)
-- CRC (Costa Rican Colon)
-- CUP (Cuban Peso)
-- CVE (Cape Verde Escudo)
-- CZK (Czech Koruna)
-- DJF (Djibouti Franc)
-- DKK (Danish Krone)
-- DOP (Dominican Peso)
-- DZD (Algerian Dinar)
-- EGP (Egyptian Pound)
-- ERN (Eritrean Nakfa)
-- ETB (Ethiopian Birr)
-- EUR (Euro)
-- FJD (Fiji Dollar)
-- FKP (Falkland Islands Pound)
-- GBP (Pound Sterling)
-- GEL (Georgian Lari)
-- GHS (Ghana Cedi)
-- GIP (Gibraltar Pound)
-- GMD (Gambian Dalasi)
-- GNF (Guinean Franc)
-- GTQ (Guatemalan Quetzal)
-- GYD (Guyanese Dollar)
-- HKD (Hong Kong Dollar)
-- HNL (Honduran Lempira)
-- HTG (Haitian Gourde)
-- HUF (Hungarian Forint)
-- IDR (Indonesian Rupiah)
-- ILS (New Israeli Sheqel)
-- INR (Indian Rupee)
-- IQD (Iraqi Dinar)
-- IRR (Iranian Rial)
-- ISK (Icelandic Krona)
-- JMD (Jamaican Dollar)
-- JOD (Jordanian Dinar)
-- JPY (Japanese Yen)
-- KES (Kenyan Shilling)
-- KGS (Kyrgyzstani Som)
-- KHR (Cambodian Riel)
-- KMF (Comorian Franc)
-- KPW (North Korean Won)
-- KRW (South Korean Won)
-- KWD (Kuwaiti Dinar)
-- KYD (Cayman Islands Dollar)
-- KZT (Kazakhstani Tenge)
-- LAK (Lao Kip)
-- LBP (Lebanese Pound)
-- LKR (Sri Lankan Rupee)
-- LRD (Liberian Dollar)
-- LSL (Lesotho Loti)
-- LYD (Libyan Dinar)
-- MAD (Moroccan Dirham)
-- MDL (Moldovan Leu)
-- MGA (Malagasy Ariary)
-- MKD (Macedonian Denar)
-- MMK (Myanmar Kyat)
-- MNT (Mongolian Tugrik)  
-- MOP (Macanese Pataca)
-- MRU (Mauritanian Ouguiya)
-- MUR (Mauritian Rupee)
-- MVR (Maldivian Rufiyaa)
-- MWK (Malawi Kwacha)
-- MXN (Mexican Peso)
-- MXV (Mexican Unidad de Inversion (UDI))
-- MYR (Malaysian Ringgit)
-- MZN (Mozambique Metical)
-- NAD (Namibian Dollar)
-- NGN (Nigerian Naira)
-- NIO (Cordoba Oro)
-- NOK (Norwegian Krone)
-- NPR (Nepalese Rupee)
-- NZD (New Zealand Dollar)
-- OMR (Omani Rial)
-- PAB (Panamanian Balboa)
-- PEN (Peruvian Sol)
-- PGK (Papua New Guinean Kina)
-- PHP (Philippine Peso)
-- PKR (Pakistani Rupee)
-- PLN (Polish Zloty)
-- PYG (Paraguayan Guarani)
-- QAR (Qatari Riyal)
-- RON (Romanian Leu)
-- RSD (Serbian Dinar)
-- RUB (Russian Ruble)
-- RWF (Rwanda Franc)
-- SAR (Saudi Riyal)
-- SBD (Solomon Islands Dollar)
-- SCR (Seychelles Rupee)
-- SDG (Sudanese Pound)
-- SEK (Swedish Krona)
-- SGD (Singapore Dollar)
-- SHP (Saint Helena Pound)
-- SLE (Sierra Leonean Leone)
-- SOS (Somali Shilling)
-- SRD (Surinamese Dollar)
-- SSP (South Sudanese Pound)
-- STN (São Tomé and Príncipe Dobra)
-- SVC (El Salvador Colon)
-- SYP (Syrian Pound)
-- SZL (Swazi Lilangeni)
-- THB (Thai Baht)  
-- TJS (Tajikistani Somoni)
-- TMT (Turkmenistan New Manat)
-- TND (Tunisian Dinar)
-- TOP (Tongan Pa'anga)
-- TRY (Turkish Lira)
-- TTD (Trinidad and Tobago Dollar)
-- TWD (New Taiwan Dollar)
-- TZS (Tanzanian Shilling)
-- UAH (Ukrainian Hryvnia)
-- UGX (Uganda Shilling)
-- USD (US Dollar)
-- USN (US Dollar (Next day))
-- UYI (Uruguay Peso en Unidades Indexadas (UI))
-- UYU (Peso Uruguayo)
-- UYW (Unidad Previsional)
-- UZS (Uzbekistan Sum)
-- VES (Bolívar Soberano)
-- VND (Vietnamese Dong)
-- VUV (Vanuatu Vatu)
-- WST (Samoan Tala)
-- XAF (CFA Franc BEAC)
-- XCD (East Caribbean Dollar)
-- XDR (SDR (Special Drawing Right))
-- XOF (CFA Franc BCEAO)
-- XPF (CFP Franc)
-- YER (Yemeni Rial)
-- ZAR (South African Rand)
-- ZMW (Zambian Kwacha)
+## Supported currencies
+See the currency list with the [link](https://github.com/HawkN113/HawkN.Iso.Currencies?tab=readme-ov-file#supported-currencies)
+Last updated at `01.01.2026`
 
 ---
 
-### Generated Types
+## Generated Types
 - `CurrencyCode` – strongly-typed enum with all ISO 4217 codes.
 - `Currency` – domain model representing a currency (code, name, numeric code, withdrawn date).
 
 ---
 
-### License
-This project is licensed under the MIT License.
+## License
+
+### Code
+This project’s source code is licensed under the [MIT License](LICENSE).
+
+### Data
+This project uses data derived from the following sources:
+
+- **Unicode Common Locale Data Repository (CLDR)**  
+  Licensed under the [Unicode License Agreement](https://unicode.org/license.html).
+
+- **ISO 4217 currency codes dataset**  
+  Source: https://github.com/datasets/currency-codes  
+  Licensed under the **Open Database License (ODbL) v1.0**.
+
+The above data licenses are **permissive and compatible with MIT-licensed code**  
+when used for reference and code generation.
+
+See [DATA-LICENSE](DATA-LICENSE) for details.
 
 ---
 
-### References
+## References
 - [ISO 4217 Standard](https://www.iso.org/iso-4217-currency-codes.html)
 - [GitHub Repository](https://github.com/HawkN113/HawkN.Iso.Currencies)
 

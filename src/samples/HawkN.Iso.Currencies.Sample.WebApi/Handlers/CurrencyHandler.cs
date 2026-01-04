@@ -1,6 +1,5 @@
 ﻿using HawkN.Iso.Currencies.Abstractions;
 using HawkN.Iso.Currencies.Models;
-using HawkN.Iso.Currencies.Sample.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 namespace HawkN.Iso.Currencies.Sample.WebApi.Handlers;
 
@@ -35,10 +34,5 @@ public static class CurrencyHandler
             .Type(CurrencyType.SpecialUnit)
             .Build()
             .Select(c => $"{c.Code} - {c.Name} ({c.CurrencyType})")
-            .ToArray());
-
-    internal static IResult GetHistoricalCurrencies([FromServices] ICurrencyService service) =>
-        Results.Ok(service.GetAllHistorical()
-            .Select(c => new CurrencyInfo(c.Code, c.Name, c.WithdrawalDate))
             .ToArray());
 }

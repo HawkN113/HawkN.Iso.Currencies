@@ -1,11 +1,8 @@
-﻿using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
-using HawkN.Iso.Currencies.Generators.Handlers;
 using HawkN.Iso.Currencies.Generators.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-
 namespace HawkN.Iso.Currencies.Generators;
 
 [Generator]
@@ -19,6 +16,7 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
                                       // </auto-generated>
                                       #nullable enable
                                       using System.Collections.Generic;
+                                      using System.Collections.Immutable;
                                       using HawkN.Iso.Currencies.Models;
                                       namespace HawkN.Iso.Currencies
                                       {
@@ -28,10 +26,6 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
                                               /// <summary> Actual currency information for codes ISO4217 </summary>
                                               public static readonly ImmutableArray<Models.Currency> ActualCurrencies = ImmutableArray.Create(
                                                 new Models.Currency[]{});
-                                              
-                                              /// <summary> Currency historical information for codes ISO4217 </summary>
-                                              public static readonly ImmutableArray<Models.Currency> HistoricalCurrencies= ImmutableArray.Create(
-                                                new Models.Currency[]{});
                                           }
                                       }
                                       """;
@@ -39,22 +33,24 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
         ErrorFactory.Clear();
-        var jsonProvider = context.CompilationProvider.Select((_, _) =>
-        {
-            try
-            {
-                return LoadJsonResources(Assembly.GetExecutingAssembly());
-            }
-            catch (Exception ex)
-            {
-                var errorMsg = $"{Constants.ErrorMark}:{ex.Message}";
-                return (errorMsg, errorMsg, errorMsg);
-            }
-        });
+        var jsonProvider = context.CompilationProvider.Select(ReadDataResource);
         context.RegisterSourceOutput(jsonProvider, (spc, tuple) => GenerateSourceOutput(tuple, spc));
     }
 
-    private new void GenerateSourceOutput((string originalJson, string replacementJson, string historicalJson) tuple,
+    static (string, string, string, string) ReadDataResource(Compilation compilation, CancellationToken ct)
+    {
+        try
+        {
+            return LoadResources(Assembly.GetExecutingAssembly());
+        }
+        catch (InvalidOperationException ex)
+        {
+            var errorMsg = $"{Constants.ErrorMark}:{ex.Message}";
+            return (errorMsg, errorMsg, errorMsg, errorMsg);
+        }
+    }
+
+    private void GenerateSourceOutput((string originalXml, string translationsXml, string replacementJson, string currencyCodesCsv) tuple,
         SourceProductionContext spc)
     {
         try
@@ -68,22 +64,46 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
                 return;
             }
 
-            var loader = new CurrencyLoader(tuple.originalJson, tuple.replacementJson, tuple.historicalJson);
-            var sb = CreateSourceBuilder(Constants.GeneratorName, Constants.DefaultNamespace,
-            [
-                "System.Collections.Generic",
-                "System.Collections.Immutable",
-                "HawkN.Iso.Currencies.Models"
-            ]);
+            var loader = new CurrencyDataLoader(tuple.originalXml, tuple.translationsXml, tuple.replacementJson, tuple.currencyCodesCsv);
+            var sb = CreateSourceBuilder(
+                Constants.GeneratorName,
+                Constants.DefaultNamespace,
+                Constants.ExtendedSourceData,
+                [
+                    "System.Collections.Generic",
+                    "System.Collections.Immutable",
+                    "HawkN.Iso.Currencies.Models"
+                ]);
 
             sb.AppendLine("    /// <summary> Currency information for codes ISO4217 </summary>")
                 .AppendLine("    internal static class LocalCurrencyDatabase")
                 .AppendLine("    {");
 
             GenerateCurrencySection(sb, "ActualCurrencies", loader.ActualCurrencyData);
-            GenerateCurrencySection(sb, "HistoricalCurrencies", loader.HistoricalCurrencyData, isHistorical: true);
 
             sb.AppendLine("    }").AppendLine("}");
+
+            var count = 2;
+            foreach (var currency in loader.ActualCurrencyData.Currencies.Where(currency => currency.NumericCode.Length < 3))
+            {
+                count++;
+                ErrorFactory.Create(new ErrorDescription
+                {
+                    DiagnosticDescriptor = new DiagnosticDescriptor(
+                        CreateDescriptorId(count.ToString()),
+                        string.Empty,
+                        $"Empty or invalid numeric code for the currency: `{currency.Code}`",
+                        string.Empty,
+                        DiagnosticSeverity.Error,
+                        true),
+                    GeneratorType = GeneratorType.Database
+                });
+            }
+            if (ErrorFactory.IsExists())
+            {
+                AddStubIfErrors(spc, HintName, StubSource, GeneratorType.Database);
+                return;
+            }
             spc.AddSource(HintName, SourceText.From(sb.ToString(), Encoding.UTF8));
         }
         catch (Exception ex)
@@ -91,9 +111,9 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
             ErrorFactory.Create(new ErrorDescription
             {
                 DiagnosticDescriptor = new DiagnosticDescriptor(
-                    DiagnosticDescriptors.UnexpectedErrorId,
+                    CreateDescriptorId("0"),
                     Constants.DiagnosticsTitle,
-                    $"Unexpected exception: {ex.Message}",
+                    $"Unexpected exception: {ex.Message}. Stacktrace: {ex.StackTrace}",
                     string.Empty,
                     DiagnosticSeverity.Error,
                     true),
@@ -103,13 +123,14 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
         }
     }
 
-    private static bool HasResourceErrors((string originalJson, string replacementJson, string historicalJson) tuple,
+    private static bool HasResourceErrors((string originalXml, string translationsXml, string replacementJson, string currencyCodesCsv) tuple,
         out List<string> messages)
     {
         messages = [];
-        if (tuple.originalJson.StartsWith(Constants.ErrorMark)) messages.Add("original:" + tuple.originalJson);
+        if (tuple.originalXml.StartsWith(Constants.ErrorMark)) messages.Add("original:" + tuple.originalXml);
         if (tuple.replacementJson.StartsWith(Constants.ErrorMark)) messages.Add("replacement:" + tuple.replacementJson);
-        if (tuple.historicalJson.StartsWith(Constants.ErrorMark)) messages.Add("historical:" + tuple.historicalJson);
+        if (tuple.translationsXml.StartsWith(Constants.ErrorMark)) messages.Add("translations:" + tuple.translationsXml);
+        if (tuple.currencyCodesCsv.StartsWith(Constants.ErrorMark)) messages.Add("codes:" + tuple.currencyCodesCsv);
         return messages.Count > 0;
     }
 
@@ -128,24 +149,15 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
             .AppendLine("        {");
         foreach (var c in data.Currencies)
         {
-            var currencyType = !c.IsHistoric && c.CurrencyType != null
+            var currencyType = c.CurrencyType != null
                 ? $"CurrencyType.{c.CurrencyType}"
                 : "null";
-            var isHist = c.IsHistoric ? "true" : "false";
-            var withdrawal = ParseWithdrawalDate(c.WithdrawalDate!);
+            int.TryParse(c.NumericCode, out var numericCode);
             sb.AppendLine(
-                $"            new(\"{c.Code}\", \"{c.Name}\", \"{c.Country}\", \"{c.NumericCode}\", {isHist}, {withdrawal}, {currencyType}),");
+                $"            new(\"{c.Code}\", \"{c.Name}\", {numericCode}, {currencyType}),");
         }
 
         sb.AppendLine("        });");
-    }
-
-    private static string ParseWithdrawalDate(string raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw)) return "null";
-        return DateTime.TryParseExact(raw, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt)
-            ? $"new DateOnly({dt.Year}, {dt.Month}, 1)"
-            : "null";
     }
 
     private void ReportResourceError(string msg)
@@ -157,7 +169,7 @@ public class LocalCurrencyDatabaseGenerator : BaseIncrementalGenerator
         ErrorFactory.Create(new ErrorDescription
         {
             DiagnosticDescriptor = new DiagnosticDescriptor(
-                DiagnosticDescriptors.ResourceLoadErrorId,
+                CreateDescriptorId("1"),
                 Constants.DiagnosticsTitle,
                 $"Failed to load {name} resource: {text}",
                 string.Empty,

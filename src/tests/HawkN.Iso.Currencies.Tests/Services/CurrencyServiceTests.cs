@@ -99,31 +99,6 @@ public class CurrencyServiceTests
     }
 
     [Fact]
-    public void GetHistorical_Should_Return_HistoricalCurrency_When_Exists()
-    {
-        var historical = _service.GetHistorical("DEM");
-        if (historical != null)
-        {
-            Assert.Equal("DEM", historical.Code);
-        }
-    }
-
-    [Fact]
-    public void GetHistorical_Should_Return_Null_When_NotExists()
-    {
-        var result = _service.GetHistorical("ZZZ");
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void GetAllHistorical_Should_Return_AllHistoricalCurrencies()
-    {
-        var all = _service.GetAllHistorical();
-        Assert.NotNull(all);
-        Assert.True(all.Length > 0);
-    }
-
-    [Fact]
     public void Query_Should_Return_CurrencyQueryBuilder()
     {
         var query = _service.Query();

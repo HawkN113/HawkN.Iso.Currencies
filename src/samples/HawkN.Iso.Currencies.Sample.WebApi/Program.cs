@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using HawkN.Iso.Currencies.Extensions;
 using HawkN.Iso.Currencies.Sample.WebApi.Extensions;
 
@@ -6,6 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(
+        new JsonStringEnumConverter());
+});
+
 // ---- Register Currency service ----
 builder.Services.AddCurrencyService();
 

@@ -4,7 +4,6 @@ using HawkN.Iso.Currencies.Extensions;
 using HawkN.Iso.Currencies.Models;
 using HawkN.Iso.Currencies.Services;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace HawkN.Iso.Currencies.Tests.Extensions;
 
 public class ServiceCollectionExtensionsTests
@@ -76,13 +75,9 @@ public class ServiceCollectionExtensionsTests
 
         public bool Exists(CurrencyCode code) => true;
 
-        public HawkN.Iso.Currencies.Models.Currency? Get(string value) => null;
+        public Currency? Get(string value) => null;
 
-        public HawkN.Iso.Currencies.Models.Currency? Get(CurrencyCode code) => null;
-
-        public HawkN.Iso.Currencies.Models.Currency? GetHistorical(string value) => null;
-
-        public HawkN.Iso.Currencies.Models.Currency[] GetAllHistorical() => [];
+        public Currency? Get(CurrencyCode code) => null;
 
         public ICurrencyQueryStart Query() => null!;
     }

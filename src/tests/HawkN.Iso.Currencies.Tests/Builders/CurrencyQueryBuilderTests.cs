@@ -1,18 +1,17 @@
 ﻿using HawkN.Iso.Currencies.Builders;
 using HawkN.Iso.Currencies.Models;
-
 namespace HawkN.Iso.Currencies.Tests.Builders
 {
     public class CurrencyQueryBuilderTests
     {
-        private static IReadOnlyList<HawkN.Iso.Currencies.Models.Currency> GetSampleCurrencies() => new List<HawkN.Iso.Currencies.Models.Currency>
+        private static IReadOnlyList<Currency> GetSampleCurrencies() => new List<Currency>
         {
-            new("USD", "US Dollar", "United States", "840", false, null, CurrencyType.Fiat),
-            new("EUR", "Euro", "Eurozone", "978", false, null, CurrencyType.Fiat),
-            new("XAU", "Gold (ounce)", null, "959", false, null, CurrencyType.PreciousMetal),
-            new("XAG", "Silver (ounce)", null, "961", false, null, CurrencyType.PreciousMetal),
-            new("XDR", "IMF Special Drawing Rights", null, "960", false, null, CurrencyType.SpecialUnit),
-            new("XXX", "No Currency", null, "999", false, null, CurrencyType.SpecialReserve),
+            new("USD", "US Dollar", 840, CurrencyType.Fiat),
+            new("EUR", "Euro", 978, CurrencyType.Fiat),
+            new("XAU", "Gold (ounce)", 959, CurrencyType.PreciousMetal),
+            new("XAG", "Silver (ounce)", 961, CurrencyType.PreciousMetal),
+            new("XDR", "IMF Special Drawing Rights", 960, CurrencyType.SpecialUnit),
+            new("XXX", "No Currency", 999, CurrencyType.SpecialReserve),
         };
 
         [Fact]
@@ -63,6 +62,7 @@ namespace HawkN.Iso.Currencies.Tests.Builders
             // Assert
             Assert.Single(result);
             Assert.Equal("USD", result[0].Code);
+            Assert.Equal("840", result[0].NumericCodeString);
         }
 
         [Fact]

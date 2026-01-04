@@ -9,9 +9,6 @@ internal sealed class CurrencyService : ICurrencyService
     private readonly IReadOnlyDictionary<string, Currency> _actualCurrencies =
         LocalCurrencyDatabase.ActualCurrencies.ToDictionary(c => c.Code, StringComparer.OrdinalIgnoreCase);
 
-    private readonly IReadOnlyDictionary<string, Currency> _historicalCurrencies =
-        LocalCurrencyDatabase.HistoricalCurrencies.ToDictionary(c => c.Code, StringComparer.OrdinalIgnoreCase);
-
     public bool TryValidate(string value, out ValidationResult result)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -60,19 +57,6 @@ internal sealed class CurrencyService : ICurrencyService
         if (!Exists(code)) return null;
         _actualCurrencies.TryGetValue(code.ToString(), out var currency);
         return currency;
-    }
-
-    public Currency? GetHistorical(string value)
-    {
-        var isExist = !string.IsNullOrWhiteSpace(value) && _historicalCurrencies.ContainsKey(value.Trim());
-        if (!isExist) return null;
-        _historicalCurrencies.TryGetValue(value.Trim(), out var currency);
-        return currency;
-    }
-
-    public Currency[] GetAllHistorical()
-    {
-        return _historicalCurrencies.Values.ToArray();
     }
 
     public ICurrencyQueryStart Query()

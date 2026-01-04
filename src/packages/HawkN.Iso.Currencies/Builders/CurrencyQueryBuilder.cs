@@ -61,8 +61,8 @@ internal sealed class CurrencyQueryBuilder :
             (_withoutCodes.Count == 0 || !_withoutCodes.Contains(c.Code)) &&
             (_withNames.Count == 0 || _withNames.Contains(c.Name)) &&
             (_withoutNames.Count == 0 || !_withoutNames.Contains(c.Name)) &&
-            (_withNumericCodes.Count == 0 || (c.NumericCode != null && _withNumericCodes.Contains(c.NumericCode!))) &&
-            (_withoutNumericCodes.Count == 0 || (c.NumericCode != null && !_withoutNumericCodes.Contains(c.NumericCode!)));
+            (_withNumericCodes.Count == 0 || (!string.IsNullOrEmpty(c.NumericCodeString) && _withNumericCodes.Contains(c.NumericCodeString!))) &&
+            (_withoutNumericCodes.Count == 0 || (!string.IsNullOrEmpty(c.NumericCodeString) && !_withoutNumericCodes.Contains(c.NumericCodeString)));
 
         return _actualCurrencies
             .Where(baseFilter)
