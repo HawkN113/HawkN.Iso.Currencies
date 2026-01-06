@@ -13,14 +13,13 @@
 [![Data: ODbL](https://img.shields.io/badge/data-ODbL%201.0-orange.svg?label=Data%20license&style=flat-square)](https://opendatacommons.org/licenses/odbl/1-0/)
 
 
-| ![HawkN.HawkN.Iso.Currencies](docs/img/HawkN.Iso.Currencies.png) | **HawkN.Iso.Currencies** provides ISO 4217 currency codes, historical currency data, and replacement mappings. |
+| ![HawkN.HawkN.Iso.Currencies](docs/img/HawkN.Iso.Currencies.png) | **HawkN.Iso.Currencies** provides ISO 4217 currency codes, and replacement mappings. |
 |--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 ---
 
 ## Features
 - **Actual currency list** - Provides a complete and up-to-date set of currency codes and their details according to the `ISO 4217` standard.
 - **Strongly typed currency codes** – `CurrencyCode` enum is generated at compile-time.
-- **Historical currency support** – Access withdrawn currencies.
 - **Lightweight & Dependency-Free** – Minimal overhead, compatible with .NET 8 and above.
 - **Integration ready** – Use in libraries, console apps, or web applications.
 
@@ -120,15 +119,6 @@ var currencies = currencyService?.Query()
         .Type(CurrencyType.Fiat)
    .Where(q => q.Code is "EUR" or nameof(CurrencyCode.USD))
    .Build();
-```
-
-#### Get historical currencies
-```csharp
-var historical = currencyService.GetAllHistorical();
-foreach (var currency in historical)
-{
-    Console.WriteLine($"{currency.Code} - {currency.Name} (Withdrawn: {currency.WithdrawnOn})");
-}
 ```
 
 #### Lookup currency
