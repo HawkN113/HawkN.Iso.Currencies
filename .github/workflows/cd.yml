@@ -117,7 +117,7 @@ jobs:
         run: |
           dotnet nuget push "${{ env.OUTPUT_NUGET_DIR }}/${{ env.PACKAGE_CURRENCIES_ID }}.${{ env.CURRENT_VERSION }}.nupkg" \
             --api-key ${{steps.login.outputs.NUGET_API_KEY}} \
-            --source ${{ env.NUGET_SOURCE_URL }}
+            --source ${{ env.NUGET_SOURCE_URL }} \
             --skip-duplicate
         shell: bash
         
