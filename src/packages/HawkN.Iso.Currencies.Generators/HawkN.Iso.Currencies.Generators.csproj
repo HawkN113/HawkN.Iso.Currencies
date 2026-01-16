@@ -22,7 +22,7 @@
         <IsPackable>false</IsPackable>
         <DownloadCldrFiles>false</DownloadCldrFiles>
         <DownloadCodesFiles>false</DownloadCodesFiles>
-        <CldrVersion>release-48</CldrVersion>
+        <CldrVersion>release-48-1</CldrVersion>
         <IsoCurrenciesEnTranslationsUrl>https://raw.githubusercontent.com/unicode-org/cldr/$(CldrVersion)/common/main/en.xml</IsoCurrenciesEnTranslationsUrl>
         <IsoCurrenciesUrl>https://raw.githubusercontent.com/unicode-org/cldr/$(CldrVersion)/common/supplemental/supplementalData.xml</IsoCurrenciesUrl>
         <IsoCurrenciesCodesUrl>https://raw.githubusercontent.com/datasets/currency-codes/main/data/codes-all.csv</IsoCurrenciesCodesUrl>
