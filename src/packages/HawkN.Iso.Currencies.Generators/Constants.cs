@@ -9,7 +9,7 @@ internal static class Constants
     public const string ErrorPrefixName = "CURRENCY_";
     public static readonly string[] ExtendedSourceData =
     [
-        "Release: release-48",
+        "Release: release-48.1.0",
         "CLDR URL: https://github.com/unicode-org/cldr",
         "Currency codes URL: https://raw.githubusercontent.com/datasets/currency-codes/main/data/codes-all.csv"
     ];
