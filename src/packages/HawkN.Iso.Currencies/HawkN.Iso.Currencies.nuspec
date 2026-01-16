@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>HawkN.Iso.Currencies</id>
-        <version>8.0.0</version>
+        <version>8.0.1</version>
         <title>HawkN.Iso.Currencies</title>
         <authors>Nikolay Selyutin (HawkN113)</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
