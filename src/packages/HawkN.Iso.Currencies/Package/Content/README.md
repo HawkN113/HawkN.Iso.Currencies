@@ -132,7 +132,7 @@ var validResult = currencyService.TryValidate(CurrencyCode.AFN, out var validate
 
 ## Supported currencies
 See the currency list with the [link](https://github.com/HawkN113/HawkN.Iso.Currencies?tab=readme-ov-file#supported-currencies)
-Last updated at `01.01.2026`
+Last updated at `16.01.2026`
 
 ---
 

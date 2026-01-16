@@ -13,7 +13,7 @@ The **HawkN.Iso.Currencies** project uses a Source Generator to generate currenc
 4. Rebuild the solution.
 5. Review the generated files:
 - `CurrencyCode.cs`
-- `LocalDatabase.cs`
+- `LocalCurrencyDatabase.cs`
 6. After verification, disable generation:
 ```json lines
 <GenerateCurrencyFiles>false</GenerateCurrencyFiles>
@@ -55,7 +55,7 @@ Replace `<release>` with the desired CLDR release version (for example: `release
 3. Rebuild the project.
 4. Verify that:
 - CLDR XML files were downloaded
-- `CurrencyCode.cs` and `LocalCurrecnyDatabase.cs` were regenerated
+- `CurrencyCode.cs` and `LocalCurrencyDatabase.cs` were regenerated
 5. Commit the generated changes to the repository.
 6. Disable the flags again:
 ```json lines

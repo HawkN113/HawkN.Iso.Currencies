@@ -12,6 +12,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
+      packages: write
       actions: read
     
     env:
@@ -49,17 +50,6 @@ jobs:
           TAG_NAME=${{ github.ref_name }}
           VERSION=${TAG_NAME#v}
           echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Check if package (${{ env.PACKAGE_CURRENCIES_ID }}) version already exists on NuGet.org
-        id: check_nuget
-        run: |
-          PACKAGE_CURRENCIES_ID_LOWER=$(echo "${{ env.PACKAGE_CURRENCIES_ID }}" | tr '[:upper:]' '[:lower:]')
-          STATUS_CODE=$(curl -s -o /dev/null -I -w "%{http_code}" "https://api.nuget.org/v3-flatcontainer/${PACKAGE_CURRENCIES_ID_LOWER}/${{ env.CURRENT_VERSION }}/index.json")
-          if [ "$STATUS_CODE" -eq 200 ]; then
-            echo "Error: Version ${{ env.CURRENT_VERSION }} already exists on NuGet.org!"
-            exit 1
-          fi
         shell: bash
 
       - name: Restore dependencies
@@ -128,4 +118,12 @@ jobs:
           dotnet nuget push "${{ env.OUTPUT_NUGET_DIR }}/${{ env.PACKAGE_CURRENCIES_ID }}.${{ env.CURRENT_VERSION }}.nupkg" \
             --api-key ${{steps.login.outputs.NUGET_API_KEY}} \
             --source ${{ env.NUGET_SOURCE_URL }}
+            --skip-duplicate
         shell: bash
+        
+      - name: Publish package (HawkN.Iso.Currencies) to GitHub packages
+        run: |
+          dotnet nuget push "${{ env.OUTPUT_NUGET_DIR }}/${{ env.PACKAGE_CURRENCIES_ID }}.${{ env.CURRENT_VERSION }}.nupkg" \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
