@@ -16,7 +16,7 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <IncludeSymbols>false</IncludeSymbols>
         <IsPackable>true</IsPackable>
-        <VersionPrefix>8.0.0</VersionPrefix>
+        <VersionPrefix>8.0.1</VersionPrefix>
         <!-- Use when need to update 'CurrencyCode' and 'LocalCurrencyDatabase' -->
         <GenerateCurrencyFiles Condition="'$(GenerateCurrencyFiles)' == ''">false</GenerateCurrencyFiles>
         <EmitCompilerGeneratedFiles>$(GenerateCurrencyFiles)</EmitCompilerGeneratedFiles>
