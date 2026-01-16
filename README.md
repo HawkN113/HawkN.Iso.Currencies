@@ -1,5 +1,7 @@
 # HawkN.Iso.Currencies
 
+> Part of the **[HawkN.Iso](https://github.com/HawkN113/HawkN.Iso)** reference framework.
+
 [![Build Status](https://img.shields.io/github/actions/workflow/status/HawkN113/HawkN.Iso.Currencies/ci.yml?label=Build&style=flat-square)](https://github.com/HawkN113/HawkN.Iso.Currencies/actions/workflows/ci.yml)
 [![CodeQL Security](https://img.shields.io/github/actions/workflow/status/HawkN113/HawkN.Iso.Currencies/codeql-analysis.yml?label=CodeQL%20Security&style=flat-square)](https://github.com/HawkN113/HawkN.Iso.Currencies/actions/workflows/codeql-analysis.yml)
 [![NuGet](https://img.shields.io/nuget/v/HawkN.Iso.Currencies?label=HawkN.Iso.Currencies&color=blue&style=flat-square)](https://www.nuget.org/packages/HawkN.Iso.Currencies/)
@@ -13,14 +15,13 @@
 [![Data: ODbL](https://img.shields.io/badge/data-ODbL%201.0-orange.svg?label=Data%20license&style=flat-square)](https://opendatacommons.org/licenses/odbl/1-0/)
 
 
-| ![HawkN.HawkN.Iso.Currencies](docs/img/HawkN.Iso.Currencies.png) | **HawkN.Iso.Currencies** provides ISO 4217 currency codes, historical currency data, and replacement mappings. |
+| ![HawkN.HawkN.Iso.Currencies](docs/img/HawkN.Iso.Currencies.png) | **HawkN.Iso.Currencies** provides ISO 4217 currency codes, and replacement mappings. |
 |--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 ---
 
 ## Features
 - **Actual currency list** - Provides a complete and up-to-date set of currency codes and their details according to the `ISO 4217` standard.
 - **Strongly typed currency codes** – `CurrencyCode` enum is generated at compile-time.
-- **Historical currency support** – Access withdrawn currencies.
 - **Lightweight & Dependency-Free** – Minimal overhead, compatible with .NET 8 and above.
 - **Integration ready** – Use in libraries, console apps, or web applications.
 
@@ -38,7 +39,7 @@
 ### Install via NuGet
 
 ```bash
-dotnet add package HawkN.Iso.Currencies.Core
+dotnet add package HawkN.Iso.Currencies
 ```
 ---
 
@@ -120,15 +121,6 @@ var currencies = currencyService?.Query()
         .Type(CurrencyType.Fiat)
    .Where(q => q.Code is "EUR" or nameof(CurrencyCode.USD))
    .Build();
-```
-
-#### Get historical currencies
-```csharp
-var historical = currencyService.GetAllHistorical();
-foreach (var currency in historical)
-{
-    Console.WriteLine($"{currency.Code} - {currency.Name} (Withdrawn: {currency.WithdrawnOn})");
-}
 ```
 
 #### Lookup currency
